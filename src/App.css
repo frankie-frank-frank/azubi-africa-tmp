@@ -2,37 +2,138 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.App-header-wrapper {
+  width: 100vw;
+  min-width: 100%;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: #181818;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 0 200px;
+  box-sizing: border-box;
+  color: #fff;
+  width: 100%;
+}
+
+.logo-btn {
+  font-size: 2rem;
+  font-weight: bold;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 2px;
+}
+
+.App-header div button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  margin: 0 8px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.App-header div button:hover {
+  color: #d87d4a;
+}
+
+.App-header img {
+  margin-top: 0;
+  display: block;
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.cart-icon {
+  height: 40px;
+  width: 40px;
+}
+
+.audiophile-logo {
+    width: 120px;
+}
+
+.header-divider {
+  border: none;
+  height: 4px;
+  width: 100%;
+  margin: 0;
+  background: #fff;
+  padding: 0 200px;
+}
+
+.audiophile-icon-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start; /* Aligns logo to the left */
+    align-items: center;
+    flex: 1
+}
+
+.header-icons {
+    width: 100%;
+}
+
+.homepage-container {
+  background: #181818;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 200px;
+  color: #fff;
+  min-height: 400px;
+}
+
+.homepage-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  gap: 16px;
+max-width: 30%;
+  text-align: left;
+}
+
+.homepage-info p {
+  margin: 0;
+}
+
+.homepage-info button {
+  margin-top: 16px;
+  background: #d87d4a;
+  color: #fff;
+  border: none;
+  padding: 12px 32px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 2px;
+  transition: background 0.2s;
+}
+
+.homepage-info button:hover {
+  background: #fbaf85;
+  color: #181818;
+}
+
+.homepage-image {
+  flex: 1;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.homepage-image img {
+  max-width: 100%;
+  max-height: 350px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: none;
 }
