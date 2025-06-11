@@ -1,22 +1,30 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/header'
+import Footer from './components/footer'
 import HomePage from './components/homepage';
-import ProductPage from './components/productpage';
-import CheckoutPage from './components/checkoutpage';
+import ProductCategoryPage from './components/productcategory';
+import CheckoutPage from './components/checkout/CheckoutPage';
+import ProductDetailPage from './components/productdetail';
+import BackToTopButton from "./components/ui/BackToTopButton";
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Header />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/headphones" element={<ProductPage type="headphones" />} />
-          <Route path="/speakers" element={<ProductPage type="speakers" />} />
-          <Route path="/earphones" element={<ProductPage type="earphones" />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-        </Routes>
+        <div style={{ flex: 1}}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/headphones" element={<ProductCategoryPage type="headphones" />} />
+            <Route path="/speakers" element={<ProductCategoryPage type="speakers" />} />
+            <Route path="/earphones" element={<ProductCategoryPage type="earphones" />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/product/:id" element={<ProductDetailPage />} />
+          </Routes>
+        </div>
+        <Footer />
+        <BackToTopButton />
       </div>
     </Router>
   );
