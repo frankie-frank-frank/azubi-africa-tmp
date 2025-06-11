@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import dataList from "../../data.json"
 import AltSeeProductButton from "../ui/AltSeeProductButton";
 import ProductCount from "../ui/ProductCount";

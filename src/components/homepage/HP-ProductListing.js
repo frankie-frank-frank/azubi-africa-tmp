@@ -1,4 +1,3 @@
-import data from "../../data.json";
 import { useNavigate } from "react-router-dom";
 
 export default function HomepageProductListing({stylesVal = {}}) {
