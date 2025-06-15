@@ -25,7 +25,7 @@ export default function CheckoutPage() {
   const [eMoneyNumber, setEMoneyNumber] = useState()
   const [eMoneyPin, setEMoneyPin] = useState();
   
-  const [cartList, setCartList] = useState(() => {
+  const [cartList] = useState(() => {
     const slugList = dataList.map(item => ({slug: item.slug, id: item.id}));
     if(slugList.length > 0) {
       const cartListTemp = []

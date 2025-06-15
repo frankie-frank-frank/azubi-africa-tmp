@@ -40,7 +40,7 @@ export default function CartModal({ open, onClose, cartItems, setCartItems, setT
                             <button
                                 style={{ background: "none", border: "none", cursor: "pointer"}}
                                 onClick={() => {
-                                    cartItems.map(itemInput => {
+                                    cartItems.forEach(itemInput => {
                                         const key = Object.keys(itemInput)[0];
                                         localStorage.removeItem(key)
                                     });
