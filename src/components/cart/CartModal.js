@@ -1,27 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCount from "../ui/ProductCount";
+import { commaSeparatedPrice, popupModalWrapper } from "../../helpers";
 
-export default function CartModal({ open, onClose, cartItems, onIncrease, onDecrease, onRemove }) {
+export default function CartModal({ open, onClose, cartItems, setCartItems, setTotalCartQuantity }) {
     const navigate = useNavigate();
 
     if (!open) return null;
 
-    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const total = cartItems.reduce((sum, itemInput) => {
+        const item = Object.values(itemInput)[0];
+        return sum + item.price * item.quantity;
+    }, 0);
+
+    const emptyCartRestyling = cartItems.length === 0 ? { display: "flex", justifyContent: "center", alignItems: "center"} : {}
 
     return (
-        <div style={{
-            position: "fixed",
-            top: 0, left: 0, right: 0, bottom: 0,
-            background: "rgba(0,0,0,0.4)",
-            display: "flex",
-            justifyContent: "end",
-            padding: "0px 200px",
-            alignItems: "center",
-            zIndex: 1000,
-        }}
-            onClick={onClose}
-        >
+        <div style={popupModalWrapper} onClick={onClose}>
             <div
                 style={{
                     background: "#fff",
@@ -31,51 +26,120 @@ export default function CartModal({ open, onClose, cartItems, onIncrease, onDecr
                     minHeight: "200px",
                     boxShadow: "0 4px 32px rgba(0,0,0,0.2)",
                     position: "absolute",
-                    top: 80
+                    top: 80,
+                    ...emptyCartRestyling
                 }}
                 onClick={e => e.stopPropagation()}
             >
                 {cartItems.length === 0 ? (
                     <p>Your cart is empty.</p>
                 ) : (
-                    <div>
-                        <h2 style={{ marginTop: 0, textAlign: "left" }}>CART ({cartItems.length})</h2>
-                        <div>
-                            {cartItems.map(item => (
-                                <div key={item.id} style={{ display: "flex", alignItems: "center", marginBottom: "16px" }}>
-                                    <img src={item.image} alt={item.name} style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 4, marginRight: 12 }} />
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontWeight: "bold" }}>{item.name}</div>
-                                        <div>${item.price} x {item.quantity}</div>
-                                    </div>
-                                    <ProductCount onDecrease={onDecrease} onIncrease={onIncrease} item={item} />
-                                </div>
-                            ))}
-                            <div style={{ borderTop: "1px solid #eee", paddingTop: 16, marginTop: 16, display: "flex", justifyContent: "space-between" }}>
-                                <span style={{ fontWeight: "bold" }}>TOTAL</span>
-                                <span style={{ fontWeight: "bold" }}>${total}</span>
-                            </div>
+                    <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 10}}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                            <h4 style={{ marginTop: 0, textAlign: "left" }}>CART ({cartItems.length})</h4>
                             <button
-                                style={{
-                                    marginTop: 24,
-                                    width: "100%",
-                                    background: "#d87d4a",
-                                    color: "#fff",
-                                    border: "none",
-                                    padding: "12px 0",
-                                    fontWeight: "bold",
-                                    fontSize: "1rem",
-                                    borderRadius: "4px",
-                                    cursor: "pointer"
-                                }}
+                                style={{ background: "none", border: "none", cursor: "pointer"}}
                                 onClick={() => {
-                                    onClose();
-                                    navigate("/checkout");
+                                    cartItems.map(itemInput => {
+                                        const key = Object.keys(itemInput)[0];
+                                        localStorage.removeItem(key)
+                                    });
+                                    setCartItems([])
+                                    setTotalCartQuantity(0)
                                 }}
                             >
-                                CHECKOUT
+                                <p style={{ opacity: 0.5, textDecoration: "underline"}}>Remove all</p>                            
                             </button>
                         </div>
+                        <div>
+                            {cartItems.map(itemInput => {
+                                const item = Object.values(itemInput)[0];
+                                const key = Object.keys(itemInput)[0];
+
+                                const handleIncrease = () => {
+                                    const updatedItem = { ...item, quantity: item.quantity + 1 };
+                                    setCartItems(prev =>
+                                        prev.map(ci => {
+                                            if(Object.values(ci)[0].id === item.id) {
+                                                if (updatedItem.quantity > 0) {
+                                                    localStorage.setItem(key, JSON.stringify(updatedItem));
+                                                } else {
+                                                    localStorage.removeItem(key)
+                                                }
+                                                window.dispatchEvent(new Event("cart-updated"));
+                                                return {[key]: updatedItem }
+                                            } else { return ci}
+                                        })
+                                    );
+                                    setTotalCartQuantity((cartItems.reduce((sum, itemInput) => {
+                                        const item = Object.values(itemInput)[0];
+                                        return sum + (item.quantity || 0);
+                                    }, 0)))
+                                };
+
+                                const handleDecrease = () => {
+                                    const updatedItem = { ...item, quantity: Math.max(0, item.quantity - 1) };
+                                    setCartItems(prev =>
+                                        prev.map(ci => {
+                                            if(Object.values(ci)[0].id === item.id) {
+                                                if (updatedItem.quantity > 0) {
+                                                    localStorage.setItem(key, JSON.stringify(updatedItem));
+                                                }else {
+                                                    localStorage.removeItem(key)
+                                                }
+                                                window.dispatchEvent(new Event("cart-updated"));
+                                                return {[key]: updatedItem }
+                                            } else { return ci}
+                                        })
+                                    );
+                                    setTotalCartQuantity((cartItems.reduce((sum, itemInput) => {
+                                        const item = Object.values(itemInput)[0];
+                                        return sum + (item.quantity || 0);
+                                    }, 0)))
+                                };
+                                return (
+                                    <div key={item.id} style={{ display: "flex", alignItems: "center", marginBottom: "16px", gap: "4%", justifyContent: "center" }}>
+                                        <div style={{width: "18%"}}>
+                                            <img src={item.image.desktop.replace("./", "/")} alt={item.name} style={{ width: 60, objectFit: "cover", borderRadius: 4, marginRight: 12 }} />
+                                        </div>
+                                        <div style={{ width: "55%" }}>
+                                            <p style={{ fontWeight: "bold", margin: 0, textAlign: "start" }}>{item.name}</p>
+                                            <p style={{ margin: 0, textAlign: "start" }}>${commaSeparatedPrice(String(item.price))}</p>
+                                        </div>
+                                        <ProductCount 
+                                            onDecrease={handleDecrease} 
+                                            onIncrease={handleIncrease} 
+                                            item={item} 
+                                            style={{width: "27%"}}
+                                        />
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div style={{ borderTop: "1px solid #eee", paddingTop: 16, marginTop: 16, display: "flex", justifyContent: "space-between" }}>
+                            <span style={{ opacity: 0.5}}>TOTAL</span>
+                            <span style={{ fontWeight: "bold" }}>$ {commaSeparatedPrice(String(total))}</span>
+                        </div>
+                        <button
+                            style={{
+                                marginTop: 24,
+                                width: "100%",
+                                background: "#d87d4a",
+                                color: "#fff",
+                                border: "none",
+                                padding: "12px 0",
+                                fontWeight: "bold",
+                                fontSize: "1rem",
+                                borderRadius: "4px",
+                                cursor: "pointer"
+                            }}
+                            onClick={() => {
+                                onClose();
+                                navigate("/checkout");
+                            }}
+                        >
+                            CHECKOUT
+                        </button>
                     </div>
                 )}
                 <button

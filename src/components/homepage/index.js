@@ -37,8 +37,8 @@ export default function HomePage() {
         <div>
             <div className="homepage-container">
                 <div className="homepage-info">
-                    <p style={{opacity: 0.4}}>NEW PRODUCT</p>
-                    <p style={{ fontWeight: "bold", fontSize: "2rem" }}>{productName}</p>
+                    <p className="overline" style={{opacity: 0.4}}>NEW PRODUCT</p>
+                    <h1>{productName}</h1>
                     <p>{productDescription}</p>
                     <AltSeeProductButton onClickFn={() => navigate(`/product/${productId}`)}/>
                 </div>

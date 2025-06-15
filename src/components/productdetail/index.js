@@ -1,17 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dataList from "../../data.json"
 import AltSeeProductButton from "../ui/AltSeeProductButton";
 import ProductCount from "../ui/ProductCount";
 import HomepageProductListing from "../homepage/HP-ProductListing";
 import HomepageProductDescriptionGroup from "../homepage/HP-ProductDescriptionGroup";
+import { commaSeparatedPrice, splitAfterDotEvery300Chars } from "../../helpers";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [hoverGoBack, setHoverGoBack] = useState(false);
   
-  const filteredData = dataList.find(item => (item.id === parseInt(id) || item.slug === id));
+  const [filteredData, setFilteredData] = useState(() => dataList.find(item => (item.id === parseInt(id) || item.slug === id)))
 
   const [cartItem, setCartItem] = useState(() => {
     if (!filteredData) return {};
@@ -20,8 +21,7 @@ export default function ProductDetailPage() {
     if (stored) {
       return JSON.parse(stored);
     } else {
-      const initial = { quantity: 0, id: filteredData.id };
-      return initial;
+      return { quantity: 0, id: filteredData.id, price: filteredData.price, image: filteredData.image, name: filteredData.name };
     }
   });
 
@@ -33,32 +33,26 @@ export default function ProductDetailPage() {
     return prev.quantity > 0 ? { ...prev, quantity: prev.quantity - 1 } : prev
   });
 
-  function splitAfterDotEvery300Chars(text) {
-    const result = [];
-    let start = 0;
-
-    while (start < text.length) {
-      let searchFrom = start + 300;
-
-      if (searchFrom >= text.length) {
-        result.push(text.slice(start).trim());
-        break;
+  useEffect(() => {
+    function syncCartItem() {
+      const filteredData = dataList.find(item => (item.id === parseInt(id) || item.slug === id))
+      if (!filteredData) return;
+      setFilteredData(prev => filteredData);
+      const key = `product-detail-${filteredData.slug}`;
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        setCartItem(JSON.parse(stored));
+      } else {
+        setCartItem({ quantity: 0, id: filteredData.id, price: filteredData.price, image: filteredData.image, name: filteredData.name });
       }
-      let dotIndex = text.indexOf('.', searchFrom);
-      if (dotIndex === -1) {
-        result.push(text.slice(start).trim());
-        break;
-      }
-
-      result.push(text.slice(start, dotIndex + 1).trim());
-      start = dotIndex + 1;
     }
-
-    return result;
-  }
+    window.addEventListener("cart-updated", syncCartItem);
+    return () => window.removeEventListener("cart-updated", syncCartItem);
+  }, [id])
 
   return (
     <div style={{ padding: "0px 200px", margin: "50px 0px"}}>
+      <p>{filteredData.name}</p>
       <div style={{ display: "flex"}}> 
         <button
           style={{ 
@@ -112,14 +106,17 @@ export default function ProductDetailPage() {
             textAlign: "start"
           }}>{filteredData?.name}</h1>
           <p style={{ textAlign: "start", opacity: "0.5"}}>{filteredData?.description}</p>
-          <p style={{ textAlign: "start", fontWeight: "bolder"}}>$ {filteredData.price}</p>
+          <p style={{ textAlign: "start", fontWeight: "bolder"}}>$ {commaSeparatedPrice(String(filteredData.price))}</p>
           <div style={{display: "flex", alignItems: "center", justifyContent: "start", gap: "5%", width: "100%", height: "42px", paddingTop: "20px"}}>
             <ProductCount onDecrease={handleDecrease} onIncrease={handleIncrease} item={cartItem}/>
             <AltSeeProductButton 
               text="ADD TO CART"
               onClickFn={() => {
                 const key = `product-detail-${filteredData.slug}`;
-                if(cartItem.quantity > 0) localStorage.setItem(key, JSON.stringify(cartItem));
+                if(cartItem.quantity > 0) { 
+                  localStorage.setItem(key, JSON.stringify(cartItem)); 
+                  window.dispatchEvent(new Event("cart-updated"));
+                }
                 else if(cartItem.quantity === 0) localStorage.removeItem(key)
               }}
             />
@@ -201,22 +198,23 @@ export default function ProductDetailPage() {
           </ul>
         </div>
       </div>
-      <div style={{display: "flex", width: "100%", marginTop: "120px", gap: "5%"}}>
-        <div style={{display: "flex", flexDirection: "column", gap: "14px", width: "50%"}}>
+      <div style={{display: "flex", width: "100%", marginTop: "120px", gap: "5%", height: "592px"}}>
+        <div style={{display: "flex", flexDirection: "column", gap: "2%", width: "45%", height: "100%"}}>
           <img style={{
-            height: "50%",
+            height: "49%",
             borderRadius: "12px"
           }} src={filteredData.gallery.first.desktop.replace("./", "/")} alt="First Gallery"/>
           <img style={{
-            height: "50%",
+            height: "49%",
             borderRadius: "12px"
           }} src={filteredData.gallery.second.desktop.replace("./", "/")} alt="Second Gallery"/>
         </div>
-        <div>
+        <div style={{width: "50%", height: "100%"}}>
           <img style={{
-            width: "635px",
-            height: "592px",
-            borderRadius: "12px"
+            borderRadius: "12px",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover"
           }} src={filteredData.gallery.third.desktop.replace("./", "/")} alt="Second Gallery"/>
         </div>
       </div>
@@ -233,7 +231,7 @@ export default function ProductDetailPage() {
           <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: "20px"}}>
             {
               filteredData.others.map(otherOpt => (
-                <div >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "start", gap: "18px"}}>
                   <img 
                     style={{
                       borderRadius: "12px",
@@ -242,7 +240,7 @@ export default function ProductDetailPage() {
                     src={otherOpt.image.desktop.replace("./", "/")} alt="Second Gallery" 
                   />
                   <h1>{otherOpt.name}</h1>
-                  <AltSeeProductButton onClickFn={() => navigate(`/product/${otherOpt.slug}`)}/>
+                  <AltSeeProductButton onClickFn={() => { navigate(`/product/${otherOpt.slug}`); navigate(`/product/${otherOpt.slug}`);window.location.reload();}}/>
                 </div>
               ))
             }

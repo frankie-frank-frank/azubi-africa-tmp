@@ -55,7 +55,7 @@ function HomepageProductSamples() {
             </div>
             <div
                 style={{
-                    background: "#e7e7e7",
+                    background: "#f1f1f1",
                     borderRadius: "8px",
                     margin: "100px 200px",
                     maxHeight: "400px",

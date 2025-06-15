@@ -1,17 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CartModal from '../cart/CartModal';
+import dataList from "../../data.json"
 
 export default function Header() {
     const [cartOpen, setCartOpen] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
+    const [cartItems, setCartItems] = useState(() => {
+        const slugList = dataList.map(item => ({slug: item.slug, id: item.id}));
+        if (!slugList) return [];
+        const cartList = []
+        for(const slugItem of slugList) {
+            const key = `product-detail-${slugItem.slug}`;
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                cartList.push({ [key] : JSON.parse(stored)})
+            }
+        }
+        return cartList;
+    })
+    const [totalCartQuantity, setTotalCartQuantity] = useState(cartItems.reduce((sum, itemInput) => {
+        const item = Object.values(itemInput)[0];
+        return sum + (item.quantity || 0);
+    }, 0))
+    
+    function refreshCartItems() {
+        const slugList = dataList.map(item => ({slug: item.slug, id: item.id}));
+        const cartList = [];
+        for(const slugItem of slugList) {
+            const key = `product-detail-${slugItem.slug}`;
+            const stored = localStorage.getItem(key);
+            if (stored) {
+            cartList.push({ [key] : JSON.parse(stored)});
+            }
+        }
+        setCartItems(cartList);
+        setTotalCartQuantity(cartList.reduce((sum, itemInput) => {
+            const item = Object.values(itemInput)[0];
+            return sum + (item.quantity || 0);
+        }, 0))
+    }
 
-    const handleIncrease = id => setCartItems(items =>
-        items.map(item => item.id === id ? { ...item, quantity: item.quantity + 1 } : item)
-    );
-    const handleDecrease = id => setCartItems(items =>
-        items.map(item => item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item)
-    );
+    useEffect(() => {
+        window.addEventListener("cart-updated", refreshCartItems);
+        return () => window.removeEventListener("cart-updated", refreshCartItems);
+    }, []);
 
     return (
         <div className="App-header-wrapper">
@@ -25,14 +57,17 @@ export default function Header() {
                     <Link to="/speakers"><button>SPEAKERS</button></Link>
                     <Link to="/earphones"><button>EARPHONES</button></Link>
                 </div>
-                <div>
+                <div style={{position: "relative", display: "inline-block"}}>
                     <img 
                         src="/shopping-cart.svg" 
-                        alt="Icons8 Logo" 
+                        alt="Cart Icon" 
                         className='cart-icon'
                         style={{ cursor: "pointer" }}
                         onClick={() => setCartOpen(true)}
                     />
+                    {totalCartQuantity > 0 && (
+                        <span className="cart-badge">{totalCartQuantity}</span>
+                    )}
                 </div>
             </header>
             <hr className="header-divider"/>
@@ -40,8 +75,8 @@ export default function Header() {
                 open={cartOpen}
                 onClose={() => setCartOpen(false)}
                 cartItems={cartItems}
-                onIncrease={handleIncrease}
-                onDecrease={handleDecrease}
+                setCartItems={setCartItems}
+                setTotalCartQuantity={setTotalCartQuantity}
             />
         </div>
     )

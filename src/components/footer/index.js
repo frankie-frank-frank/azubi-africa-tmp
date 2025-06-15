@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 function Footer() {
   return (
     <div style={{
-        backgroundColor: "#181818",
+        backgroundColor: "#101010",
         display: "flex",
         flexDirection: "column",
         gap: "15px",
