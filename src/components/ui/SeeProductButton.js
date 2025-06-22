@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useWindowWidth } from "../../custom-hooks"
 
 export default function SeeProductButton({ onClick, style = {}, children = "SEE PRODUCT", slug }) {
     const [hovered, setHovered] = useState(false);
+    const width = useWindowWidth();
+    const isMobile = width < 768;
 
     return (
         <button
@@ -10,7 +13,7 @@ export default function SeeProductButton({ onClick, style = {}, children = "SEE 
                 color: hovered ? "#fff" : "#000",
                 border: "1px solid black",
                 padding: "16px 32px",
-                fontSize: "1rem",
+                fontSize: isMobile ? "0.5rem" : "1rem",
                 fontWeight: "bold",
                 borderRadius: "2px",
                 letterSpacing: "2px",

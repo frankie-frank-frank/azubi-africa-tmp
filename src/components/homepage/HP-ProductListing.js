@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useWindowWidth } from "../../custom-hooks"
 
 export default function HomepageProductListing({stylesVal = {}}) {
     const headphone = {
@@ -19,29 +20,20 @@ export default function HomepageProductListing({stylesVal = {}}) {
     
     const itemsList = [headphone, speaker, earphone];
 
+    const width = useWindowWidth();
+    const isMobile = width < 768;
+
+    const homepageRowStyle = isMobile ? "homepage-row-mobile" : "homepage-row"
+    const homepageRowLiElementStyle = isMobile ? "homepage-row-li-element-mobile" : "homepage-row-li-element"
+    
     const navigate = useNavigate();
+
     return (
-        <ul className="homepage-row" style={{ display: "flex", justifyContent: "center", gap: "40px", padding: "40px 200px", position: 'relative', listStyle: "none", margin: "80px 0px", ...stylesVal }}>
+        <ul className={homepageRowStyle} style={{ ...stylesVal }}>
             {itemsList.map(item => 
                 <li
                     key={item.name}
-                    style={{
-                        textAlign: "center",
-                        position: "relative",
-                        minWidth: "180px",
-                        minHeight: "200px",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        border: "none",
-                        borderRadius: "8px",
-                        paddingTop: "80px",
-                        background: "#f1f1f1",
-                        padding: "20px 20px",
-                        width: "100vw",
-                        boxSizing: "border-box"
-                    }}
+                    className={homepageRowLiElementStyle}
                 >
                     <img
                         src={item.image}

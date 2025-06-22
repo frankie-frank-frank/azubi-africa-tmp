@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CartModal from '../cart/CartModal';
 import dataList from "../../data.json"
+import { useWindowWidth } from "../../custom-hooks"
 
 export default function Header() {
     const [cartOpen, setCartOpen] = useState(false);
@@ -40,23 +41,39 @@ export default function Header() {
         }, 0))
     }
 
+    const width = useWindowWidth();
+    const isMobile = width < 768;
+
+    const appHeaderClass = isMobile ? 'App-header-mobile' : 'App-header';
+    const audioPhileIconClass = isMobile ? "" : "audiophile-icon-container";
+    const appHeaderWrapperClass = isMobile ? "App-header-wrapper-mobile" : "App-header-wrapper";
+
     useEffect(() => {
         window.addEventListener("cart-updated", refreshCartItems);
         return () => window.removeEventListener("cart-updated", refreshCartItems);
     }, []);
 
     return (
-        <div className="App-header-wrapper">
-            <header className="App-header">
-                <div className="audiophile-icon-container">
+        <div className={appHeaderWrapperClass}>
+            <header className={appHeaderClass}>
+                {
+                    isMobile && (
+                        <img src="/assets/MobileMenu.svg" alt="Menu Icon"/>
+                    )
+                }
+                <div className={audioPhileIconClass}>
                     <Link to="/"><img src="/assets/shared/desktop/logo.svg" alt="Audiophile Logo" className='audiophile-logo'/></Link>
                 </div>
-                <div className="header-icons">
-                    <Link to="/"><button>HOME</button></Link>
-                    <Link to="/headphones"><button>HEADPHONES</button></Link>
-                    <Link to="/speakers"><button>SPEAKERS</button></Link>
-                    <Link to="/earphones"><button>EARPHONES</button></Link>
-                </div>
+                {
+                    !isMobile && (
+                        <div className="header-icons">
+                            <Link to="/"><button>HOME</button></Link>
+                            <Link to="/headphones"><button>HEADPHONES</button></Link>
+                            <Link to="/speakers"><button>SPEAKERS</button></Link>
+                            <Link to="/earphones"><button>EARPHONES</button></Link>
+                        </div>
+                    )
+                }
                 <div style={{position: "relative", display: "inline-block"}}>
                     <img 
                         src="/shopping-cart.svg" 
@@ -70,7 +87,7 @@ export default function Header() {
                     )}
                 </div>
             </header>
-            <hr className="header-divider"/>
+            { !isMobile && <hr className="header-divider"/>}
             <CartModal
                 open={cartOpen}
                 onClose={() => setCartOpen(false)}

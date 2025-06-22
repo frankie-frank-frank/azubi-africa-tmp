@@ -5,6 +5,7 @@ import HomepageProductSamples from "./HP-ProductSamples";
 import HomepageProductDescriptionGroup from "./HP-ProductDescriptionGroup";
 import { useNavigate } from "react-router-dom";
 import AltSeeProductButton from "../ui/AltSeeProductButton";
+import { useWindowWidth } from "../../custom-hooks"
 
 export default function HomePage() {
     const [productName, setProductName] = useState("");
@@ -13,6 +14,13 @@ export default function HomePage() {
     const [productId, setProductId] = useState("");
 
     const navigate = useNavigate();
+    const width = useWindowWidth();
+    const isMobile = width < 768;
+
+    const homepageContainerClass = isMobile ? "homepage-container-mobile" : "homepage-container";
+    const homepageInfoClass = isMobile ? "homepage-info-mobile" : "homepage-info";
+    const homepageImageClass = isMobile ? "homepage-image-mobile" : "homepage-image";
+    const homepageImageElementClass = isMobile ? "homepage-image-element-mobile" : "homepage-image-element"
 
     useEffect(() => {
         function pickRandomProduct() {
@@ -34,21 +42,21 @@ export default function HomePage() {
     }, []);
     
     return (
-        <div>
-            <div className="homepage-container">
-                <div className="homepage-info">
+        <>
+            <div className={homepageContainerClass}>
+                <div className={homepageInfoClass}>
                     <p className="overline" style={{opacity: 0.4}}>NEW PRODUCT</p>
                     <h1>{productName}</h1>
                     <p>{productDescription}</p>
                     <AltSeeProductButton onClickFn={() => navigate(`/product/${productId}`)}/>
                 </div>
-                <div className="homepage-image">
-                    <img src={productImageUrl} alt="Homepage Carousel Product"/>
+                <div className={homepageImageClass}>
+                    <img src={productImageUrl} alt="Homepage Carousel Product" className={homepageImageElementClass} />
                 </div>
             </div>
             <HomepageProductListing />
             <HomepageProductSamples />
             <HomepageProductDescriptionGroup />
-        </div>
+        </>
     );
 }
