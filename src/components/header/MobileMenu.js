@@ -1,7 +1,5 @@
-import { useEffect } from 'react'
-import { popupModalWrapper, commaSeparatedPrice } from '../../helpers';
+import { popupModalWrapper } from '../../helpers';
 import dataList from "../../data.json"
-import { useNavigate } from 'react-router-dom';
 import { useWindowWidth } from "../../custom-hooks"
 import HomepageProductListing from '../homepage/HP-ProductListing';
 
