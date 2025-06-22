@@ -13,7 +13,7 @@ export default function SeeProductButton({ onClick, style = {}, children = "SEE 
                 color: hovered ? "#fff" : "#000",
                 border: "1px solid black",
                 padding: "16px 32px",
-                fontSize: isMobile ? "0.5rem" : "1rem",
+                fontSize: isMobile ? "0.5rem" : "1.2rem",
                 fontWeight: "bold",
                 borderRadius: "2px",
                 letterSpacing: "2px",

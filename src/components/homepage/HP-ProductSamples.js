@@ -51,7 +51,7 @@ function HomepageProductSamples() {
                         style={{ minHeight: "340px", width: "100%" }}
                     />
                     <div className={homepageProductSampleOneDiv}>
-                        <h1 style={{ fontSize: isMobile ? "1.5rem" : "1rem", fontWeight: "bold", margin: 0, lineHeight: 1.1 }}>ZX7 SPEAKER</h1>
+                        <h1 style={{ fontSize: isMobile ? "1.5rem" : "2.5rem", fontWeight: isMobile ? "bold" : 'normal', margin: 0, lineHeight: 1.1 }}>ZX7 SPEAKER</h1>
                         <SeeProductButton onClick={() => navigate("/product/5")} />
                     </div>
                 </div>
@@ -65,7 +65,7 @@ function HomepageProductSamples() {
                     />
                 </div>
                 <div className={homepageProductSampleTwoDiv}>
-                    <h1 style={{ fontSize: isMobile ? "1.5rem" : "1rem", fontWeight: "bold", margin: 0, lineHeight: 1.1, marginLeft: "20px" }}>YX1 EARPHONES</h1>
+                    <h1 style={{ fontSize: isMobile ? "1.5rem" : "2.5rem", fontWeight: isMobile ? "bold" : 'normal', margin: 0, lineHeight: 1.1, marginLeft: "20px" }}>YX1 EARPHONES</h1>
                     <SeeProductButton onClick={() => navigate("/product/1")} style={{marginLeft: "20px"}}/>
                 </div>
             </div>
