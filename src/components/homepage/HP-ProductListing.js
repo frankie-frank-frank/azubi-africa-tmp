@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useWindowWidth } from "../../custom-hooks"
 
-export default function HomepageProductListing({stylesVal = {}}) {
+export default function HomepageProductListing({stylesVal = {}, configs = {}, optionalCloseHandler}) {
     const headphone = {
         name: "HEADPHONES",
         path: "/headphones",
@@ -29,11 +29,12 @@ export default function HomepageProductListing({stylesVal = {}}) {
     const navigate = useNavigate();
 
     return (
-        <ul className={homepageRowStyle} style={{ ...stylesVal }}>
+        <ul className={homepageRowStyle} style={{ ...stylesVal }} onClick={optionalCloseHandler??""}>
             {itemsList.map(item => 
                 <li
                     key={item.name}
                     className={homepageRowLiElementStyle}
+                    style={{ ...configs?.liClassOverride }}
                 >
                     <img
                         src={item.image}
@@ -43,9 +44,10 @@ export default function HomepageProductListing({stylesVal = {}}) {
                             top: -90,
                             left: "50%",
                             transform: "translateX(-50%)",
-                            width: "200px",
-                            height: "200px",
-                            objectFit: "contain"
+                            width: configs?.imageWidthOverride ?? "200px",
+                            height: configs?.imageWidthOverride ?? "200px",
+                            objectFit: "contain",
+                            ...configs?.imageClassOverride
                         }}
                     />
                     <p style={{
