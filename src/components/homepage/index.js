@@ -6,6 +6,7 @@ import HomepageProductDescriptionGroup from "./HP-ProductDescriptionGroup";
 import { useNavigate } from "react-router-dom";
 import AltSeeProductButton from "../ui/AltSeeProductButton";
 import { useWindowWidth } from "../../custom-hooks"
+import FillDots from "./FillDots";
 
 export default function HomePage() {
     const [productName, setProductName] = useState("");
@@ -49,6 +50,7 @@ export default function HomePage() {
                     <h1>{productName}</h1>
                     <p>{productDescription}</p>
                     <AltSeeProductButton onClickFn={() => navigate(`/product/${productId}`)}/>
+                    <FillDots index={parseInt(productId)} total={data.length} />
                 </div>
                 <div className={homepageImageClass}>
                     <img src={productImageUrl} alt="Homepage Carousel Product" className={homepageImageElementClass} />
