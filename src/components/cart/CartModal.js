@@ -27,7 +27,7 @@ export default function CartModal({ open, onClose, cartItems, setCartItems, setT
         }
     }
 
-    const mobileWrapperStyle = isMobile ? { width: "100%", padding: "0px", justifyContent: "center" } : {}
+    const mobileWrapperStyle = isMobile ? { width: "100%", padding: "0px", justifyContent: "center", zIndex: 100000 } : {}
     return (
         <div style={{...popupModalWrapper, ...mobileWrapperStyle}} onClick={onClose}>
             <div

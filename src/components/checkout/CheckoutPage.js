@@ -8,11 +8,14 @@ import LongField from "./form/LongField";
 import HSixHeader from "./form/HSixHeader";
 import PaymentOptionButton from "./form/PaymentOptionButton";
 import SubTotalField from "./form/SubTotalField";
+import { useWindowWidth } from "../../custom-hooks"
 
 export default function CheckoutPage() {
 
   const [hoverGoBack, setHoverGoBack] = useState(false);
   const navigate = useNavigate();
+  const width = useWindowWidth();
+  const isMobile = width < 768;
 
   const [billingName, setBillingName] = useState()
   const [emailAddress, setEmailAddress] = useState()
@@ -79,54 +82,62 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div style={{display: "flex", position: "relative", background: "#F2F2F2", padding: "80px", gap: "8%"}}>
+    <div style={{
+      display: "flex", 
+      position: "relative", 
+      flexDirection: isMobile ? "column" : "row", 
+      background: "#F2F2F2", 
+      padding: isMobile ? "0px" : "80px", 
+      gap: "8%"
+    }}>
       <button
-          style={{ 
-            opacity: hoverGoBack ? "1" : "0.5", 
-            background: "none",
-            position: "absolute",
-            border: "none", 
-            cursor: "pointer",
-            top: "30px",
-            fontSize: "16px",
-            color: hoverGoBack ? "#d87d4a" : "inherit",
-            transition: "color 0.2s",
-            width: "200px",
-            padding: "0px",
-            textAlign: "left"
-          }}
-          onClick={() => navigate(-1)}
-          onMouseEnter={() => setHoverGoBack(true)}
-          onMouseLeave={() => setHoverGoBack(false)}
-        >
-          Go Back
-        </button>
-      <div style={{width: "60%", padding: "60px 40px 40px", display: "flex", flexDirection: "column", alignItems: "start", justifyContent: "center", background: "#FFF", borderRadius: "12px"}}>
+        style={{ 
+          opacity: hoverGoBack ? "1" : "0.5", 
+          background: "none",
+          position: "absolute",
+          border: "none", 
+          cursor: "pointer",
+          top: "30px",
+          fontSize: "16px",
+          marginLeft: isMobile ? "58px" : "",
+          color: hoverGoBack ? "#d87d4a" : "inherit",
+          transition: "color 0.2s",
+          width: "200px",
+          padding: "0px",
+          textAlign: "left"
+        }}
+        onClick={() => navigate(-1)}
+        onMouseEnter={() => setHoverGoBack(true)}
+        onMouseLeave={() => setHoverGoBack(false)}
+      >
+        Go Back
+      </button>
+      <div style={{width: isMobile ? "" : "60%", padding: isMobile ? "80px 40px" : "60px 40px 40px", margin: isMobile ? "20px" : "", display: "flex", flexDirection: "column", alignItems: "start", justifyContent: "center", background: "#FFF", borderRadius: "12px"}}>
         <h2 style={{marginBottom: "40px"}}>CHECKOUT</h2>
         <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "40px", alignItems: "start"}}>
           <div style={{display: "flex", flexDirection: "column", width: "100%", alignItems: "start", gap: "10px"}}>
             <HSixHeader text={"BILLING DETAILS"} />
-            <div style={{width: "100%", display: "flex", flexDirection: "column", gap: "28px"}}>
-              <div style={{display: "flex", alignItems: "center", justifyContent: "start", width: "100%", gap: "7%"}}>
-                <Field textInput={"Name"} style={{width: "40%"}} placeholderText={"Alexei Ward"} value={billingName} setValue={setBillingName}/>
-                <Field textInput={"Email Address"} style={{width: "40%"}} placeholderText={"alexie@mail.com"} value={emailAddress} setValue={setEmailAddress}/>
+            <div style={{width: "100%", display: "flex", flexDirection: "column", gap: isMobile ? "17px" : "28px"}}>
+              <div style={{display: "flex", alignItems: isMobile ? "start" : "center", justifyContent: isMobile ? "center" : "start", flexDirection: isMobile ? "column" : "row", width: "100%", gap: isMobile ? "17px" : "7%"}}>
+                <Field textInput={"Name"} style={{width: isMobile ? "100%" : "40%" }} placeholderText={"Alexei Ward"} value={billingName} setValue={setBillingName}/>
+                <Field textInput={"Email Address"} style={{width: isMobile ? "100%" :"40%" }} placeholderText={"alexie@mail.com"} value={emailAddress} setValue={setEmailAddress}/>
               </div>
-              <div style={{width: "40%"}}>
+              <div style={{width: isMobile ? "100%" : "40%"}}>
                 <Field textInput={"Phone Number"} placeholderText={"+1 202-555-0136"} value={phoneNumber} setValue={setPhoneNumber}/>
               </div>
             </div>
           </div>
           <div style={{width: "100%", display: "flex", flexDirection: "column", alignItems: "start", gap: "10px"}}>
             <HSixHeader text={"SHIPPING INFO"} />
-            <div style={{width: "100%", display: "flex", flexDirection: "column", gap: "28px"}}>
-              <div style={{display: "flex", alignItems: "start", justifyContent: "center", width: "87%"}}>
+            <div style={{width: "100%", display: "flex", flexDirection: "column", gap: isMobile ? "17px" : "28px"}}>
+              <div style={{display: "flex", alignItems: "start", justifyContent: "center", width: isMobile ? "100%" : "87%"}}>
                 <LongField textInput={"Address"} placeholderText={"1137 Williams Avenue"} style={{width: "100%"}} value={shippingAddress} setValue={setShippingAddress}/>
               </div>
-              <div style={{display: "flex", alignItems: "center", justifyContent: "start", width: "100%", gap: "7%"}}>
-                <Field textInput={"ZIP Code"} style={{width: "40%"}} placeholderText={"10001"} type={"number"} value={zipCode} setValue={setZipCode}/>
-                <Field textInput={"City"}  style={{width: "40%"}} placeholderText={"New York"} value={city} setValue={setCity}/>
+              <div style={{display: "flex", alignItems: "center", justifyContent: "start", width: "100%", flexDirection:  isMobile ? "column" : "row", gap: isMobile ? "17px" : "7%"}}>
+                <Field textInput={"ZIP Code"} style={{width: isMobile ? "100%" : "40%"}} placeholderText={"10001"} type={"number"} value={zipCode} setValue={setZipCode}/>
+                <Field textInput={"City"}  style={{width: isMobile ? "100%" : "40%"}} placeholderText={"New York"} value={city} setValue={setCity}/>
               </div>
-              <div style={{width: "40%"}}>
+              <div style={{width: isMobile ? "100%" : "40%"}}>
                 <Field textInput={"Country"} placeholderText={"United States"} value={country} setValue={setCountry}/>
               </div>
             </div>
@@ -153,7 +164,7 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-      <div style={{ width: "32%", background: "#FFF", height: "70%", borderRadius: "12px", padding: "60px 40px 40px", display: "flex", flexDirection: "column", gap: "20px"}}>
+      <div style={{ width:  isMobile ? "" : "32%", background: "#FFF", height: "70%", borderRadius: "12px", padding: isMobile ? "0px 40px 40px" : "60px 40px 40px", margin: isMobile ? "20px" : "", display: "flex", flexDirection: "column", gap: "20px"}}>
         <h5 style={{textAlign: "start"}}>SUMMARY</h5>
         <div style={{display: "flex", flexDirection: "column", alignItems: "start", justifyContent: "center"}}>
           {cartList.map(itemInput => {

@@ -2,9 +2,12 @@ import { useEffect } from 'react'
 import { popupModalWrapper, commaSeparatedPrice } from '../../helpers';
 import dataList from "../../data.json"
 import { useNavigate } from 'react-router-dom';
+import { useWindowWidth } from "../../custom-hooks"
 
 function ThankYouModal({ open, onClose, cartList }) {
     const navigate = useNavigate()
+    const width = useWindowWidth();
+    const isMobile = width < 768;
 
     useEffect(() => {
         if (!open) return;
@@ -35,8 +38,9 @@ function ThankYouModal({ open, onClose, cartList }) {
 
     const vatValue = Math.round(total * 0.2)
 
+    const wrapperDeviceStyles = isMobile ? { ...popupModalWrapper, padding: "0px", width: "100%", justifyContent: "center"} : {popupModalWrapper}
     return (
-        <div style={popupModalWrapper} onClick={onClose}>
+        <div style={wrapperDeviceStyles} onClick={onClose}>
             <div 
                 style={{
                     background: "#fff",
@@ -47,11 +51,12 @@ function ThankYouModal({ open, onClose, cartList }) {
                     boxShadow: "0 4px 32px rgba(0,0,0,0.2)",
                     position: "absolute",
                     top: "20%",
-                    left: "33%",
+                    left: isMobile ? "" : "33%",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "start",
                     gap: "30px",
+                    margin: "20px"
                 }}
                 onClick={e => e.stopPropagation()}
             >
