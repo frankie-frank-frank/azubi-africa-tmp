@@ -2,9 +2,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCount from "../ui/ProductCount";
 import { commaSeparatedPrice, popupModalWrapper } from "../../helpers";
+import { useWindowWidth } from "../../custom-hooks"
 
 export default function CartModal({ open, onClose, cartItems, setCartItems, setTotalCartQuantity }) {
     const navigate = useNavigate();
+    const width = useWindowWidth();
+    const isMobile = width < 768;
 
     if (!open) return null;
 
@@ -14,19 +17,29 @@ export default function CartModal({ open, onClose, cartItems, setCartItems, setT
     }, 0);
 
     const emptyCartRestyling = cartItems.length === 0 ? { display: "flex", justifyContent: "center", alignItems: "center"} : {}
+    const pickImageType = (image) => {
+        if(width < 767) {
+            return image.mobile
+        } else if(width > 767 && width < 1025) {
+            return image.tablet
+        } else {
+            return image.desktop
+        }
+    }
 
+    const mobileWrapperStyle = isMobile ? { width: "100%", padding: "0px", justifyContent: "center" } : {}
     return (
-        <div style={popupModalWrapper} onClick={onClose}>
+        <div style={{...popupModalWrapper, ...mobileWrapperStyle}} onClick={onClose}>
             <div
                 style={{
                     background: "#fff",
                     borderRadius: "8px",
-                    padding: "32px",
+                    padding: isMobile ? "20px" : "32px",
                     minWidth: "350px",
                     minHeight: "200px",
                     boxShadow: "0 4px 32px rgba(0,0,0,0.2)",
                     position: "absolute",
-                    top: 80,
+                    top: isMobile ? "120px" : 80,
                     ...emptyCartRestyling
                 }}
                 onClick={e => e.stopPropagation()}
@@ -100,7 +113,7 @@ export default function CartModal({ open, onClose, cartItems, setCartItems, setT
                                 return (
                                     <div key={item.id} style={{ display: "flex", alignItems: "center", marginBottom: "16px", gap: "4%", justifyContent: "center" }}>
                                         <div style={{width: "18%"}}>
-                                            <img src={item.image.desktop.replace("./", "/")} alt={item.name} style={{ width: 60, objectFit: "cover", borderRadius: 4, marginRight: 12 }} />
+                                            <img src={pickImageType(item.image).replace("./", "/")} alt={item.name} style={{ width: 60, objectFit: "cover", borderRadius: 4, marginRight: 12 }} />
                                         </div>
                                         <div style={{ width: "55%" }}>
                                             <p style={{ fontWeight: "bold", margin: 0, textAlign: "start" }}>{item.name}</p>
@@ -142,20 +155,26 @@ export default function CartModal({ open, onClose, cartItems, setCartItems, setT
                         </button>
                     </div>
                 )}
-                <button
-                    onClick={onClose}
-                    style={{
-                        position: "absolute",
-                        top: 12,
-                        right: 12,
-                        background: "none",
-                        border: "none",
-                        fontSize: "1.5rem",
-                        color: "#888",
-                        cursor: "pointer"
-                    }}
-                    aria-label="Close"
-                >×</button>
+                {
+                    isMobile 
+                    ? <></> 
+                    : (
+                        <button
+                            onClick={onClose}
+                            style={{
+                                position: "absolute",
+                                top: 12,
+                                right: 12,
+                                background: "none",
+                                border: "none",
+                                fontSize: "1.5rem",
+                                color: "#888",
+                                cursor: "pointer"
+                            }}
+                            aria-label="Close"
+                        >×</button>
+                    )
+                }
             </div>
         </div>
     );
