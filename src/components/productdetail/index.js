@@ -6,10 +6,14 @@ import ProductCount from "../ui/ProductCount";
 import HomepageProductListing from "../homepage/HP-ProductListing";
 import HomepageProductDescriptionGroup from "../homepage/HP-ProductDescriptionGroup";
 import { commaSeparatedPrice, splitAfterDotEvery300Chars } from "../../helpers";
+import { useWindowWidth } from "../../custom-hooks"
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const width = useWindowWidth();
+  const isMobile = width < 768;
+
   const [hoverGoBack, setHoverGoBack] = useState(false);
   
   const [filteredData, setFilteredData] = useState(() => dataList.find(item => (item.id === parseInt(id) || item.slug === id)))
@@ -51,8 +55,7 @@ export default function ProductDetailPage() {
   }, [id])
 
   return (
-    <div style={{ padding: "0px 200px", margin: "50px 0px"}}>
-      <p>{filteredData.name}</p>
+    <div className="pdp-wrapper">
       <div style={{ display: "flex"}}> 
         <button
           style={{ 
@@ -65,7 +68,9 @@ export default function ProductDetailPage() {
             transition: "color 0.2s",
             width: "200px",
             padding: "0px",
-            textAlign: "left"
+            textAlign: "left",
+            marginTop: isMobile ? "30px" : "0px",
+            marginLeft: isMobile ? "5px" : "0px"
           }}
           onClick={() => navigate(-1)}
           onMouseEnter={() => setHoverGoBack(true)}
@@ -74,30 +79,17 @@ export default function ProductDetailPage() {
           Go Back
         </button>
       </div>
-      <div style={{
-        margin: "30px 0px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "start",
-        gap: "10%",
-        width: "100%"
-      }}>
+      <div className="pdp-sect-one">
         <img 
           src={filteredData?.image.desktop.replace('./', '/')} 
           alt="Product Category Item" 
           style={{
-            width: "50%"
+            width: isMobile ? "100%" : "50%",
+            borderRadius: "15px",
           }}
         />
-        <div style={{
-          width: "40%", 
-          display: "flex", 
-          flexDirection: "column", 
-          alignItems: "start", 
-          justifyContent: "center", 
-          gap: "2px"
-        }}>
-          {filteredData.new ? <p style={{ color: "#d87d4a"}}>NEW PRODUCT</p> : <></>}
+        <div className="pdp-sect-one-product-description-sect">
+          {filteredData.new ? <p style={{ color: "#d87d4a"}} className="overline">NEW PRODUCT</p> : <></>}
           <h1 style={{ 
             fontSize: "3rem", 
             fontWeight: "bold",
@@ -123,134 +115,134 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
-      <div style={{display: "flex", width: "100%", marginTop: "120px", gap: "10%"}}>
-        <div style={{ width: "57%"}}>
-          <h1 style={{ 
-            fontSize: "25px", 
-            fontWeight: "bold",
-            opacity: "0.88",
-            margin: 0,
-            lineHeight: 1.1,
-            textAlign: "start"
-          }}>
-            FEATURES
-          </h1>
-          <div style={{ display: "flex", flexDirection: "column"}}>
-            {
-              splitAfterDotEvery300Chars(filteredData.features).map(chunk => (
-                <p style={{textAlign: "start", fontSize: "14px", color: "#b4b4b4"}}>{chunk}</p>
-              ))
-            }
+      <div style={{display: "flex", flexDirection: "column", gap: isMobile ? "90px": "120px", marginTop: "50px"}}>
+        <div style={{display: "flex", width: "100%", gap: isMobile ? "30px" : "10%", flexDirection: isMobile ? "column" : "row"}}>
+          <div style={{ width: isMobile ? "100%" : "57%"}}>
+            <h1 style={{ 
+              fontSize: "25px", 
+              fontWeight: "bold",
+              opacity: "0.88",
+              margin: 0,
+              lineHeight: 1.1,
+              textAlign: "start"
+            }}>
+              FEATURES
+            </h1>
+            <div style={{ display: "flex", flexDirection: "column"}}>
+              {
+                splitAfterDotEvery300Chars(filteredData.features).map(chunk => (
+                  <p style={{textAlign: "start", fontSize: "14px", color: "#000", opacity: "0.45"}}>{chunk}</p>
+                ))
+              }
+            </div>
           </div>
-        </div>
-        <div style={{ width: "30%" }}>
-          <h1 style={{ 
-            fontSize: "25px", 
-            fontWeight: "bold",
-            opacity: "0.88",
-            margin: 0,
-            lineHeight: 1.1,
-            textAlign: "start",
-            padding: "0px"
-          }}>IN THE BOX</h1>
-          <ul style={{ position: 'relative', listStyle: "none", padding: "0px" }}>{
-            filteredData.includes.map(item => {
-              return (
-                <li
-                  key={item.name}
-                  style={{
-                    textAlign: "center",
-                    position: "relative",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "24px",
-                    width: "100vw",
-                    boxSizing: "border-box"
-                  }}
-                >
-                  <p 
+          <div style={{ width: isMobile ? "100%" : "30%" }}>
+            <h1 style={{ 
+              fontSize: "25px", 
+              fontWeight: "bold",
+              opacity: "0.88",
+              margin: 0,
+              lineHeight: 1.1,
+              textAlign: "start",
+              padding: "0px"
+            }}>IN THE BOX</h1>
+            <ul style={{ position: 'relative', listStyle: "none", padding: "0px" }}>{
+              filteredData.includes.map(item => {
+                return (
+                  <li
+                    key={item.name}
                     style={{
-                      color: "#d87d4a",
-                      marginTop: "12px",
-                      fontWeight: "bolder",
-                      fontSize: "12px",
-                      letterSpacing: "2px"
+                      textAlign: "center",
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "24px",
+                      width: "100vw",
+                      boxSizing: "border-box"
                     }}
                   >
-                    {item.quantity}x
-                  </p>
-                  <p 
-                    style={{
-                      color: "#000",
-                      marginTop: "12px",
-                      textTransform: "uppercase",
-                      fontWeight: "bolder",
-                      fontSize: "12px",
-                      letterSpacing: "2px"
-                    }}
-                  >
-                    {item.item}
-                  </p>
-                </li>
-              )
-            })
-          }
-          </ul>
-        </div>
-      </div>
-      <div style={{display: "flex", width: "100%", marginTop: "120px", gap: "5%", height: "592px"}}>
-        <div style={{display: "flex", flexDirection: "column", gap: "2%", width: "45%", height: "100%"}}>
-          <img style={{
-            height: "49%",
-            borderRadius: "12px"
-          }} src={filteredData.gallery.first.desktop.replace("./", "/")} alt="First Gallery"/>
-          <img style={{
-            height: "49%",
-            borderRadius: "12px"
-          }} src={filteredData.gallery.second.desktop.replace("./", "/")} alt="Second Gallery"/>
-        </div>
-        <div style={{width: "50%", height: "100%"}}>
-          <img style={{
-            borderRadius: "12px",
-            width: "100%",
-            height: "100%",
-            objectFit: "cover"
-          }} src={filteredData.gallery.third.desktop.replace("./", "/")} alt="Second Gallery"/>
-        </div>
-      </div>
-      <div style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",  marginTop: "120px", gap: "40px"}}>
-          <h1 style={{ 
-            fontSize: "32px", 
-            fontWeight: "bold",
-            margin: 0,
-            letterSpacing: "1.14px",
-            lineHeight: 1.1,
-            textAlign: "start",
-            width: "100%"
-          }}>YOU MAY ALSO LIKE</h1>
-          <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: "20px"}}>
-            {
-              filteredData.others.map(otherOpt => (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "start", gap: "18px"}}>
-                  <img 
-                    style={{
-                      borderRadius: "12px",
-                      width: "100%"
-                    }} 
-                    src={otherOpt.image.desktop.replace("./", "/")} alt="Second Gallery" 
-                  />
-                  <h1>{otherOpt.name}</h1>
-                  <AltSeeProductButton onClickFn={() => { navigate(`/product/${otherOpt.slug}`); navigate(`/product/${otherOpt.slug}`);window.location.reload();}}/>
-                </div>
-              ))
+                    <p 
+                      style={{
+                        color: "#d87d4a",
+                        marginTop: "12px",
+                        fontWeight: "bolder",
+                        fontSize: "12px",
+                        letterSpacing: "2px"
+                      }}
+                    >
+                      {item.quantity}x
+                    </p>
+                    <p 
+                      style={{
+                        color: "#000",
+                        marginTop: "12px",
+                        textTransform: "uppercase",
+                        fontWeight: "bolder",
+                        fontSize: "12px",
+                        letterSpacing: "2px"
+                      }}
+                    >
+                      {item.item}
+                    </p>
+                  </li>
+                )
+              })
             }
+            </ul>
           </div>
-      </div>
-      <div style={{marginTop: "200px"}}>
-        <HomepageProductListing stylesVal={{padding: "0px", height: "250px"}}/>
-      </div>
-      <div style={{marginTop: "200px"}}>
-        <HomepageProductDescriptionGroup  stylesVal={{padding: "0px"}}/>
+        </div>
+        <div style={{display: "flex", width: "100%", gap: isMobile ? "8px": "5%", height: isMobile ? "100%": "592px", flexDirection: isMobile ? "column" : "row"}}>
+          <div style={{display: "flex", flexDirection: "column", gap: isMobile ? "8px": "2%", width: isMobile ? "100%": "45%", height: "100%"}}>
+            <img style={{
+              height: "49%",
+              borderRadius: "12px",
+              objectFit: "cover"
+            }} src={filteredData.gallery.first.desktop.replace("./", "/")} alt="First Gallery"/>
+            <img style={{
+              height: "49%",
+              borderRadius: "12px",
+              objectFit: "cover"
+            }} src={filteredData.gallery.second.desktop.replace("./", "/")} alt="Second Gallery"/>
+          </div>
+          <div style={{width: isMobile ? "100%": "50%", height: "100%"}}>
+            <img style={{
+              borderRadius: "12px",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover"
+            }} src={filteredData.gallery.third.desktop.replace("./", "/")} alt="Second Gallery"/>
+          </div>
+        </div>
+        <div style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "40px"}}>
+            <h1 style={{ 
+              fontSize: isMobile ? "25px": "32px", 
+              fontWeight: "bold",
+              margin: 0,
+              letterSpacing: "1.14px",
+              lineHeight: 1.1,
+              textAlign: isMobile ? "center": "start",
+              width: "100%"
+            }}>YOU MAY ALSO LIKE</h1>
+            <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: isMobile ? "40px": "20px", flexDirection: isMobile ? "column": "row" }}>
+              {
+                filteredData.others.map(otherOpt => (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "start", gap: "18px"}}>
+                    <img 
+                      style={{
+                        borderRadius: "12px",
+                        width: "100%"
+                      }} 
+                      src={otherOpt.image.desktop.replace("./", "/")} alt="Second Gallery" 
+                    />
+                    <h1>{otherOpt.name}</h1>
+                    <AltSeeProductButton onClickFn={() => { navigate(`/product/${otherOpt.slug}`); navigate(`/product/${otherOpt.slug}`);window.location.reload();}}/>
+                  </div>
+                ))
+              }
+            </div>
+        </div>
+        <HomepageProductListing stylesVal={{padding: "0px", height: isMobile ? "100%" : "250px", margin: "0px", marginTop: "100px"}}/>
+        <HomepageProductDescriptionGroup  stylesVal={{padding: "0px", marginTop: "0px"}}/>
       </div>
     </div>
   );
