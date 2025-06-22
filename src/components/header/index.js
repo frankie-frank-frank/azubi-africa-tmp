@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import CartModal from '../cart/CartModal';
 import dataList from "../../data.json"
 import { useWindowWidth } from "../../custom-hooks"
+import MobileMenu from "./MobileMenu";
 
 export default function Header() {
     const [cartOpen, setCartOpen] = useState(false);
@@ -23,6 +24,7 @@ export default function Header() {
         const item = Object.values(itemInput)[0];
         return sum + (item.quantity || 0);
     }, 0))
+    const [ mobileMenuModalOpen, setMobileMenuModalOpen ] = useState(false);
     
     function refreshCartItems() {
         const slugList = dataList.map(item => ({slug: item.slug, id: item.id}));
@@ -58,7 +60,7 @@ export default function Header() {
             <header className={appHeaderClass}>
                 {
                     isMobile && (
-                        <img src="/assets/MobileMenu.svg" alt="Menu Icon"/>
+                        <img src="/assets/MobileMenu.svg" alt="Menu Icon" onClick={() => setMobileMenuModalOpen(true)}/>
                     )
                 }
                 <div className={audioPhileIconClass}>
@@ -95,6 +97,7 @@ export default function Header() {
                 setCartItems={setCartItems}
                 setTotalCartQuantity={setTotalCartQuantity}
             />
+            <MobileMenu open={mobileMenuModalOpen} onClose={() => setMobileMenuModalOpen(false)} />
         </div>
     )
 }
